@@ -1,0 +1,25 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>&nbsp;&nbsp;&nbsp;Configuration</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">configuration</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <ion-grid>
+    <ion-row>
+      <ion-col>
+        <ion-input label="Add Category" placeholder="Enter category" [(ngModel)]="category"></ion-input>
+      </ion-col>
+      <ion-col>
+        <ion-button (click)="categoryHandler()" shape="round" fill="outline">Accept</ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  <ion-toast  position="top" [isOpen]="isToastOpen" message="Category added" [duration]="2500"
+    (didDismiss)="setOpen(false)"></ion-toast>
+</ion-content>

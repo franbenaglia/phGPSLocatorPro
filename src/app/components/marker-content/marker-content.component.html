@@ -1,0 +1,33 @@
+<ion-card>
+  <ion-card-header>
+    <ion-icon size="large"  class="ion-icon-delete" name="trash-outline" (click)="delete()"></ion-icon>
+    <ion-icon size="large" (click)="close()" class="ion-icon-close" name="close-circle"></ion-icon>
+  </ion-card-header>
+  <ion-card-content>
+    <ion-grid>
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <ion-row>
+          <ion-input formControlName="title" labelPlacement="floating" label="Title: " placeholder="title"></ion-input>
+        </ion-row>
+        <ion-row>
+          <ion-input formControlName="description" labelPlacement="floating" label="Description: "
+            placeholder="Enter the description"></ion-input>
+        </ion-row>
+
+
+        <ion-row>
+          <ion-select aria-label="Category" value="General" (ionChange)="onChange($event)" >
+            <ion-select-option *ngFor="let c of categories; index as position" [value]="c">{{c}}</ion-select-option>
+          </ion-select>
+        </ion-row>
+
+
+        <ion-row>
+          <ion-button type="submit" shape="round" size="small" [disabled]="!form.valid">Accept</ion-button>
+          <ion-button shape="round" (click)="upLoadPhoto()" color='light' size="small">Upload pic</ion-button>
+          <ion-button shape="round" (click)="showPhoto()" [disabled]="notImage()" color='light' size="small">Show pic</ion-button>
+        </ion-row>
+      </form>
+    </ion-grid>
+  </ion-card-content>
+</ion-card>

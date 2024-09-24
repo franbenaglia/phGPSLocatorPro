@@ -1,0 +1,25 @@
+ion-grid {
+    --ion-grid-padding: 2px;
+
+    --ion-grid-padding-xs: 2px;
+    --ion-grid-padding-sm: 2px;
+    --ion-grid-padding-md: 2px;
+    --ion-grid-padding-lg: 2px;
+    --ion-grid-padding-xl: 2px;
+
+    --ion-grid-column-padding: 3px;
+
+    --ion-grid-column-padding-xs: 3px;
+    --ion-grid-column-padding-sm: 3px;
+    --ion-grid-column-padding-md: 3px;
+    --ion-grid-column-padding-lg: 3px;
+    --ion-grid-column-padding-xl: 3px;
+}
+
+ion-col {
+    background-color: #010808;
+    border: solid 1px #fff;
+    color: #fff;
+    text-align: left;
+    font-size: 12px;
+}

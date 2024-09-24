@@ -1,0 +1,7 @@
+{
+  "name": "phGPSLocator",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}

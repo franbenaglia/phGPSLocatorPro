@@ -1,0 +1,30 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>&nbsp;&nbsp;&nbsp;phGPSLocator</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">map</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <ion-popover class="popwidth" #popover size="cover" trigger="top-center" side="top" alignment="center"
+    [isOpen]="isPopoverOpen" (didDismiss)="isPopoverOpen = false">
+    <ng-template>
+      <app-marker-content (openPhotoContent)="openPhotoContent($event)" (dismissPopOverEvent)="closePopOver($event)" [coordinate]="coordinate"></app-marker-content>
+    </ng-template>
+  </ion-popover>
+  <ion-popover class="popwidth" #popoverpic size="cover" trigger="top-center" side="top" alignment="center" [isOpen]="isPopoverPicOpen"
+    (didDismiss)="isPopoverPicOpen = false">
+    <ng-template>
+      <app-photo-content (dismissPopOverPicEvent)="closePopOverPic($event)"
+        [coordinate]="coordinate"></app-photo-content>
+    </ng-template>
+  </ion-popover>
+  <ion-spinner *ngIf="spin"></ion-spinner>
+  <div id='leafletMap'></div>
+  <ion-toast [isOpen]="isToastOpen" message="Lack of geolocation permission!!!" [duration]="5000"
+    (didDismiss)="setOpen(false)"></ion-toast>
+</ion-content>

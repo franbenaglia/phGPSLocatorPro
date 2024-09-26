@@ -1,74 +1,87 @@
 import { Injectable } from '@angular/core';
-import { Preferences } from '@capacitor/preferences';
+import { SqliteService } from './sqlite.service';
+import { IndexeddbService } from './indexeddb.service';
+import { Capacitor } from '@capacitor/core';
+import { Observable } from 'rxjs';
 import { Coordinate } from '../model/coordinate';
+import { UserPhoto } from '../model/userPhoto';
 
 @Injectable({
   providedIn: 'root'
 })
 export class StorageService {
 
-  constructor() { }
+  private native: boolean = false;
 
-  public coordinates: Coordinate[] = [];
-
-  private COORDINATES_STORAGE: string = 'coordinates';
-
-  public async addNewPosition(coordinate: Coordinate) {
-
-    this.coordinates.push(coordinate);
-
-    Preferences.set({
-      key: this.COORDINATES_STORAGE,
-      value: JSON.stringify(this.coordinates),
-    });
-
+  constructor(private sqlite: SqliteService, private indexeddb: IndexeddbService) {
+    this.init();
   }
 
-  public async updatePosition(coordinate: Coordinate, coors: Coordinate[]) {
-
-    let coordinatesChanged = coors.map(c => (c.lat === coordinate.lat && c.lng === coordinate.lng) ? coordinate : c);
-
-    this.coordinates.length = 0;
-    this.coordinates.push(...coordinatesChanged);
-
-    Preferences.set({
-      key: this.COORDINATES_STORAGE,
-      value: JSON.stringify(this.coordinates),
-    });
-
+  async init() {
+    this.native = Capacitor.isNativePlatform();
+    if (this.native) {
+      await this.sqlite.init();
+    } else {
+      await this.indexeddb.openDb();
+    }
   }
 
-  public async getPositions() {
 
-    return await Preferences.get({
-      key: this.COORDINATES_STORAGE
-    });
-
+  getPositions(): Observable<Coordinate[]> {
+    if (!this.native) {
+      return this.indexeddb.getPositions();
+    } else {
+      return this.sqlite.getPositions();
+    }
   }
 
-  public async deletePosition(coordinate: Coordinate, coors: Coordinate[]) {
-
-    let cs = coors.filter(c => !(c.lat === coordinate.lat && c.lng == coordinate.lng));
-    this.coordinates.length = 0;
-    this.coordinates.push(...cs);
-
-    Preferences.set({
-      key: this.COORDINATES_STORAGE,
-      value: JSON.stringify(this.coordinates),
-    });
-
+  getPhotos(): Observable<UserPhoto[]> {
+    if (!this.native) {
+      return this.indexeddb.getPhotos();
+    } else {
+      return this.sqlite.getPhotos();
+    }
   }
 
-  public async deleteAllPositions() {
-
-    this.coordinates.length = 0;
-
-    Preferences.set({
-      key: this.COORDINATES_STORAGE,
-      value: JSON.stringify(this.coordinates),
-    });
-
+  async addNewPosition(c: Coordinate) {
+    if (!this.native) {
+      return await this.indexeddb.addNewPosition(c);
+    } else {
+      return await this.sqlite.addNewPosition(c);
+    }
   }
 
+
+  async updatePosition(c: Coordinate) {
+    if (!this.native) {
+      return await this.indexeddb.updatePosition(c);
+    } else {
+      return await this.sqlite.updatePosition(c);
+    }
+  }
+
+  async deletePosition(c: Coordinate) {
+    if (!this.native) {
+      return await this.indexeddb.deletePosition(c);
+    } else {
+      return await this.sqlite.deletePosition(c);
+    }
+  }
+
+  async deletePhoto(up: UserPhoto) {
+    if (!this.native) {
+      return await this.indexeddb.deletePhoto(up);
+    } else {
+      return await this.sqlite.deletePhoto(up);
+    }
+  }
+
+  async addPhoto(up: UserPhoto) {
+    if (!this.native) {
+      return await this.indexeddb.addPhoto(up);
+    } else {
+      return await this.sqlite.addPhoto(up);
+    }
+  }
 
 }

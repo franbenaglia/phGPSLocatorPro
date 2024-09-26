@@ -7,8 +7,8 @@ import { ActionSheetController } from '@ionic/angular';
 import { UserPhoto } from '../model/userPhoto';
 import { addIcons } from 'ionicons';
 import { camera, chevronForwardCircle, colorPalette, document, globe, image } from 'ionicons/icons';
-import { IndexeddbService } from '../services/indexeddb.service';
 import { environment } from 'src/environments/environment';
+import { StorageService } from '../services/storage.service';
 
 @Component({
   selector: 'app-photo',
@@ -19,7 +19,7 @@ import { environment } from 'src/environments/environment';
 })
 export class PhotoPage implements OnInit {
 
-  constructor(private idbService: IndexeddbService, public photoService: PhotoService, private actionSheetController: ActionSheetController) {
+  constructor(private storageService: StorageService, public photoService: PhotoService, private actionSheetController: ActionSheetController) {
     addIcons({ camera, chevronForwardCircle, document, colorPalette, globe, image });
   }
 
@@ -29,7 +29,7 @@ export class PhotoPage implements OnInit {
 
   async ngOnInit() {
     //await this.photoService.loadSaved();
-    this.idbService.getPhotos().subscribe(ps => {
+    this.storageService.getPhotos().subscribe(ps => {
       this.photos = ps;
     })
     this.checkPermissions();
@@ -57,7 +57,7 @@ export class PhotoPage implements OnInit {
         role: 'destructive',
         icon: 'trash',
         handler: () => {
-          this.idbService.deletePhoto(photo);
+          this.storageService.deletePhoto(photo);
         }
       }, {
         text: 'Cancel',

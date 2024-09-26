@@ -7,17 +7,16 @@ import { UserPhoto } from '../model/userPhoto';
 import { Platform } from '@ionic/angular';
 import { Capacitor } from '@capacitor/core';
 import { Observable, from, of } from 'rxjs';
-import { StorageService } from './storage.service';
 import { Coordinate } from '../model/coordinate';
 import { CategoryService } from './category.service';
-import { IndexeddbService } from './indexeddb.service';
+import { StorageService } from './storage.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PhotoService {
 
-  constructor(private idbService: IndexeddbService, private categoryService: CategoryService, private platform: Platform, private storageService: StorageService) {
+  constructor(private storageService: StorageService, private categoryService: CategoryService, private platform: Platform) {
   }
 
   public photos: UserPhoto[] = [];
@@ -57,7 +56,7 @@ export class PhotoService {
 
     const savedImageFile = await this.userPhoto();
 
-    this.idbService.addPhoto(savedImageFile);
+    this.storageService.addPhoto(savedImageFile);
     /*
         Preferences.set({
           key: this.PHOTO_STORAGE,
@@ -88,16 +87,8 @@ export class PhotoService {
     let photo: GalleryPhoto = capturedPhoto.photos[0];
 
     const savedImageFile = await this.savePicture(photo);
-    //this.photos.unshift(savedImageFile);
 
-    this.idbService.addPhoto(savedImageFile);
-
-    /*
-        Preferences.set({
-          key: this.PHOTO_STORAGE,
-          value: JSON.stringify(this.photos),
-        });
-    */
+    this.storageService.addPhoto(savedImageFile);
   }
 
   private async savePicture(photo: Photo | GalleryPhoto) {
@@ -132,7 +123,7 @@ export class PhotoService {
 
   public loadSaved() {
 
-    this.idbService.getPhotos().subscribe(ps => {
+    this.storageService.getPhotos().subscribe(ps => {
 
       this.photos = ps;
 
@@ -154,6 +145,7 @@ export class PhotoService {
     });
   }
 
+  /*
   public async loadSavedFromMarks() {
 
     const { value } = await this.storageService.getPositions();
@@ -172,13 +164,14 @@ export class PhotoService {
       }
     }
   }
+    */
 
 
   public loadSavedCategorizedFromMarks() {
 
     this.coordinateCategorized.length = 0;
 
-    this.idbService.getPositions().subscribe(p => {
+    this.storageService.getPositions().subscribe(p => {
 
       let coordinates = p;
       this.coordinates = coordinates.filter(c => c.photo);

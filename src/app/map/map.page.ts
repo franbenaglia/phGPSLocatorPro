@@ -6,11 +6,10 @@ import * as L from 'leaflet';
 import { Platform } from '../model/platform';
 import { GeolocService } from '../services/geoloc.service';
 import { Coordinate } from '../model/coordinate';
-import { StorageService } from '../services/storage.service';
 import { from } from 'rxjs';
 import { PhotoContentComponent } from '../components/photo-content/photo-content.component';
 import { MarkerContentComponent } from '../components/marker-content/marker-content.component';
-import { IndexeddbService } from '../services/indexeddb.service';
+import { StorageService } from '../services/storage.service';
 
 @Component({
   selector: 'app-map',
@@ -21,7 +20,7 @@ import { IndexeddbService } from '../services/indexeddb.service';
 })
 export class MapPage implements OnInit {
 
-  constructor(private idbService: IndexeddbService, private storage: StorageService, private geolocService: GeolocService) { }
+  constructor(private storageService: StorageService, private geolocService: GeolocService) { }
 
   platform: Platform;
   positioncoords: string = '';
@@ -112,7 +111,7 @@ export class MapPage implements OnInit {
 
     const self = this;
 
-    from(this.idbService.getPositions()).subscribe(ms => {
+    from(this.storageService.getPositions()).subscribe(ms => {
 
       let coordinates: Coordinate[] = ms;
 

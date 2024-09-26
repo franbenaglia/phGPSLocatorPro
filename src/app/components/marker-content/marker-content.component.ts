@@ -9,10 +9,9 @@ import { Coordinate } from 'src/app/model/coordinate';
 import { UserPhoto } from 'src/app/model/userPhoto';
 import { CategoryService } from 'src/app/services/category.service';
 import { PhotoService } from 'src/app/services/photo.service';
-import { StorageService } from 'src/app/services/storage.service';
 import { environment } from 'src/environments/environment';
 import { CommonModule } from '@angular/common';
-import { IndexeddbService } from 'src/app/services/indexeddb.service';
+import { StorageService } from 'src/app/services/storage.service';
 
 
 @Component({
@@ -25,8 +24,8 @@ import { IndexeddbService } from 'src/app/services/indexeddb.service';
 export class MarkerContentComponent implements OnInit {
 
 
-  constructor(public categoryService: CategoryService, private storage: StorageService, private router: Router, private photoService: PhotoService,
-    private idbService: IndexeddbService) {
+  constructor(public categoryService: CategoryService, private router: Router, private photoService: PhotoService,
+    private storageService: StorageService) {
     addIcons({ closeCircle, cloudUploadOutline, imageOutline, trashOutline, arrowUpOutline });
   }
 
@@ -54,7 +53,7 @@ export class MarkerContentComponent implements OnInit {
     let exist: any;
     let coordinates: Coordinate[];
 
-    from(this.idbService.getPositions()).subscribe(ms => {
+    from(this.storageService.getPositions()).subscribe(ms => {
 
       coordinates = ms;
 
@@ -72,9 +71,9 @@ export class MarkerContentComponent implements OnInit {
       this.coordinate.category = this.category;
 
       if (!exist) {
-        this.idbService.addNewPosition(this.coordinate);
+        this.storageService.addNewPosition(this.coordinate);
       } else {
-        this.idbService.updatePosition(this.coordinate);
+        this.storageService.updatePosition(this.coordinate);
       }
 
       this.dismissPopOverEvent.emit(true);
@@ -112,7 +111,7 @@ export class MarkerContentComponent implements OnInit {
   }
 
   async delete() {
-    await this.idbService.deletePosition(this.coordinate);
+    await this.storageService.deletePosition(this.coordinate);
     //this.dismissPopOverEvent.emit(true);
     window.location.assign(this.urllocalserver);
   }

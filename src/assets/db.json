@@ -1,0 +1,34 @@
+{
+    "database": "coordinates.db",
+    "version": 1,
+    "encrypted": false,
+    "mode": "full",
+    "tables": [
+        {
+            "name": "coordinates",
+            "schema": [
+                {
+                    "column": "id",
+                    "value": "INTEGER PRIMARY KEY"
+                },
+                {
+                    "column": "coordinates",
+                    "value": "TEXT"
+                }
+            ]
+        },
+        {
+            "name": "photos",
+            "schema": [
+                {
+                    "column": "id",
+                    "value": "INTEGER PRIMARY KEY"
+                },
+                {
+                    "column": "photos",
+                    "value": "TEXT"
+                }
+            ]
+        }
+    ]
+}

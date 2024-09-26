@@ -6,7 +6,7 @@ import { UserPhoto } from '../model/userPhoto';
 
 const dbname = 'phGPSLocatorPro';
 const version = 5;
-const storenames = ['coordinates', 'photos'];
+const storeNames = ['coordinates', 'photos'];
 
 @Injectable({
   providedIn: 'root'
@@ -14,16 +14,14 @@ const storenames = ['coordinates', 'photos'];
 export class IndexeddbService {
 
   constructor() {
-    this.openDb(storenames);
   }
 
-  private dbOpen: IDBDatabase;
   private index: IDBIndex[];
 
   private dabOpen: IDBPDatabase;
 
 
-  async openDb(storeNames: string[]) {
+  async openDb() {
 
     let index = this.index;
 
@@ -111,20 +109,20 @@ export class IndexeddbService {
     return from(this.findAllElements('photos'));
   }
 
-  addNewPosition(c: Coordinate) {
-    this.addElement(c, 'coordinates');
+  async addNewPosition(c: Coordinate) {
+    await this.addElement(c, 'coordinates');
   }
 
-  addPhoto(up: UserPhoto) {
-    this.addElement(up, 'photos');
+  async addPhoto(up: UserPhoto) {
+    await this.addElement(up, 'photos');
   }
 
-  updatePosition(c: Coordinate) {
-    this.updateElement(c, 'coordinates');
+  async updatePosition(c: Coordinate) {
+    await this.updateElement(c, 'coordinates');
   }
 
-  updatePhoto(up: UserPhoto) {
-    this.updateElement(up, 'photos');
+  async updatePhoto(up: UserPhoto) {
+    await this.updateElement(up, 'photos');
   }
 
   async deletePosition(c: Coordinate) {

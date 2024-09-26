@@ -8,7 +8,7 @@ import { UserPhoto } from '../model/userPhoto';
 import { addIcons } from 'ionicons';
 import { chevronForwardCircle } from 'ionicons/icons';
 import { PhotoAlbumContainerComponent } from "../components/photo-album-container/photo-album-container.component";
-import { IndexeddbService } from '../services/indexeddb.service';
+import { StorageService } from '../services/storage.service';
 
 @Component({
   selector: 'app-photo-album',
@@ -19,7 +19,7 @@ import { IndexeddbService } from '../services/indexeddb.service';
 })
 export class PhotoAlbumPage implements OnInit {
 
-  constructor(private idbService: IndexeddbService, public photoService: PhotoService, private actionSheetController: ActionSheetController) {
+  constructor(private storageService: StorageService, public photoService: PhotoService, private actionSheetController: ActionSheetController) {
 
     addIcons({ chevronForwardCircle });
 
@@ -41,7 +41,7 @@ export class PhotoAlbumPage implements OnInit {
         role: 'destructive',
         icon: 'trash',
         handler: () => {
-          this.idbService.deletePhoto(photo);
+          this.storageService.deletePhoto(photo);
         }
       }, {
         text: 'Cancel',

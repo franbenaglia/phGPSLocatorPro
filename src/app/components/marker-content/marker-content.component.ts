@@ -56,7 +56,7 @@ export class MarkerContentComponent implements OnInit {
 
     from(this.storageService.getPositions()).subscribe(ms => {
 
-      if (Capacitor.isNativePlatform) {
+      if (Capacitor.isNativePlatform()) {
         coordinates = ms;
         exist = coordinates.find(c => c.coordinates.lat === this.coordinate.lat && c.coordinates.lng === this.coordinate.lng);
       } else {

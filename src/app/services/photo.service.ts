@@ -183,7 +183,7 @@ export class PhotoService {
 
       let coordinates: Coordinate[] = p;
 
-      if (Capacitor.isNativePlatform) {
+      if (Capacitor.isNativePlatform()) {
         coordinates = p.map(c => c.coordinates);
       } else {
         coordinates = p;

@@ -24,7 +24,21 @@ export class GeolocService {
   }
 
   private currentPositionNative = async () => {
-    return await Geolocation.getCurrentPosition();
+
+    return new Promise((res, rej) => {
+      Geolocation.watchPosition({
+        enableHighAccuracy: true,
+        timeout: 5000,
+        maximumAge: 0
+      }, (coordinates, err) => {
+        if (err) {
+          rej(err);
+        } else {
+          res(coordinates);
+        }
+      });
+    });
+    // return await Geolocation.getCurrentPosition();
   };
 
   private getPositionFromNavigator = () => {

@@ -116,7 +116,7 @@ export class MapPage implements OnInit {
 
       let coordinates: Coordinate[];
 
-      if (Capacitor.isNativePlatform) {
+      if (Capacitor.isNativePlatform()) {
         coordinates = ms.map(c => c.coordinates);
       } else {
         coordinates = ms;

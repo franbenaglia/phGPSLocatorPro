@@ -20,6 +20,7 @@ export class PhotoService {
   }
 
   public photos: UserPhoto[] = [];
+  public photosource: (string | Blob)[] = [];
   public coordinates: Coordinate[] = [];
   public coordinateCategorized: CoordinateCategory[] = [];
 
@@ -125,7 +126,14 @@ export class PhotoService {
 
     this.storageService.getPhotos().subscribe(ps => {
 
-      this.photos = ps;
+      //this.photos = ps;
+
+      if (Capacitor.isNativePlatform()) {
+        this.photos = ps.map(ph => ({ ...ph.photos, photoSource: Capacitor.convertFileSrc(ph.photos.filepath), id: ph.id }));
+      } else {
+        this.photos = ps.map(ph => ({ ...ph, photoSource: ph.base64Data }));
+      }
+
 
       /*
       if (!this.platform.is('hybrid')) {
@@ -171,9 +179,16 @@ export class PhotoService {
 
     this.coordinateCategorized.length = 0;
 
-    this.storageService.getPositions().subscribe(p => {
+    this.storageService.getPositions().subscribe(p => {   //{ coordinates: JSON.parse(element.coordinates), id: element.id }
 
-      let coordinates = p;
+      let coordinates: Coordinate[] = p;
+
+      if (Capacitor.isNativePlatform) {
+        coordinates = p.map(c => c.coordinates);
+      } else {
+        coordinates = p;
+      }
+
       this.coordinates = coordinates.filter(c => c.photo);
 
       /*

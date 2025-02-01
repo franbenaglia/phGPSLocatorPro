@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Capacitor } from '@capacitor/core';
 import { IonGrid, IonRow, IonInput, IonButton, IonCard, IonCardHeader, IonIcon, IonCardContent } from "@ionic/angular/standalone";
 import { addIcons } from 'ionicons';
 import { closeCircle } from 'ionicons/icons';
@@ -24,9 +25,11 @@ export class PhotoContentComponent implements OnInit {
 
   ngOnInit() {
 
-    //this.image = this.coordinate.photo;
-    this.image = this.coordinate.photo.base64Data;
-
+    if (!Capacitor.isNativePlatform()) {
+      this.image = this.coordinate.photo.base64Data;
+    } else {
+      this.image = Capacitor.convertFileSrc(this.coordinate.photo.filepath);
+    }
   }
 
   close() {

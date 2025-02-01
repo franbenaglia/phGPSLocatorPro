@@ -4,6 +4,7 @@ import { Preferences } from '@capacitor/preferences';
 import { from, Observable } from 'rxjs';
 import { Coordinate } from '../model/coordinate';
 import { UserPhoto } from '../model/userPhoto';
+
 //https://github.com/capacitor-community/sqlite/blob/master/docs/API.md
 //https://www.sqlite.org/autoinc.html
 //https://www.sqlite.org/limits.html
@@ -15,6 +16,8 @@ export class SqliteService {
   public isIOS: boolean;
 
   public dbName: string;
+  //if the app restart this do not work
+  private serial: number;
 
   constructor() {
   }
@@ -24,6 +27,8 @@ export class SqliteService {
   }
 
   private async initDatabase() {
+
+    this.serial = 0;
 
     const dbSetup = await Preferences.get({ key: 'first_setup' })
 
@@ -73,26 +78,40 @@ export class SqliteService {
 
   async create(element: any, table: string): Promise<capSQLiteChanges> {
 
-    let sql = 'INSERT INTO ' + table + ' VALUES(?)';
+    this.serial++;
+
+    const idserial = Math.floor(Math.random() * 99999999);
+
+    let sql = 'INSERT INTO ' + table + ' VALUES(?,?)';
 
     const dbName = await this.getDbName();
 
     const jsonstring = JSON.stringify(element);
 
-    return await CapacitorSQLite.executeSet({
+    const x = await CapacitorSQLite.executeSet({
       database: dbName,
       set: [
         {
           statement: sql,
           values: [
+            idserial,
+            //this.serial,
             jsonstring
           ]
         }
       ]
     });
+
+
+    console.log('LASTID LOGGG:' + x.changes.lastId);
+    console.log('VALUES LOGGG:');
+    x.changes.values.forEach(x => console.log(x));
+
+    return x;
+
   }
 
-  async read(table: string) {
+  async read(table: string): Promise<any[]> {
 
     let sql = 'SELECT * FROM ' + table;
 
@@ -107,19 +126,36 @@ export class SqliteService {
       let elements: any[] = [];
 
       for (let index = 0; index < response.values.length; index++) {
-        const element = response.values[index];
-        elements.push(element);
+        let element = response.values[index];
+        //console.log('lectrura2: ' + element.coordinates);
+        //console.log('lectrura23: ' + element.id);
+        if (table === 'coordinates') {
+          elements.push({ coordinates: JSON.parse(element.coordinates), id: element.id });
+        } else {
+          //elements.push(JSON.parse(element.photos));
+          elements.push({ photos: JSON.parse(element.photos), id: element.id });
+        }
+
+
       }
       return elements;
 
     }).catch(err => Promise.reject(err))
   }
 
-  getPositions(): Observable<Coordinate[]> {
+  private showProps(obj): void {
+    let result = "";
+    Object.keys(obj).forEach((i) => {
+      result += `${i} ===== ${obj[i]}\n`;
+    });
+    console.log(result);
+  }
+
+  getPositions(): Observable<any[]> {
     return from(this.read('coordinates'));
   }
 
-  getPhotos(): Observable<UserPhoto[]> {
+  getPhotos(): Observable<any[]> { //UserPhoto
     return from(this.read('photos'));
   }
 
@@ -159,9 +195,8 @@ export class SqliteService {
   }
 
   async update(element: any, storage: string): Promise<capSQLiteChanges> {
-
-    let sql = 'UPDATE ' + storage + ' SET ' + storage + '=? WHERE id=?';
-
+    let sql = 'UPDATE ' + storage + ' SET ' + storage + ' = ? WHERE id = ?';
+    //console.log('sqqqqqlllllll ' + element);
     const dbName = await this.getDbName();
 
     return await CapacitorSQLite.executeSet({
@@ -170,7 +205,7 @@ export class SqliteService {
         {
           statement: sql,
           values: [
-            element,
+            JSON.stringify(element),
             element.id
           ]
         }

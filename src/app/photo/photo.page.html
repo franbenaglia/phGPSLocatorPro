@@ -13,7 +13,7 @@
   <ion-grid>
     <ion-row>
       <ion-col size="6" *ngFor="let photo of photoService.photos; index as position">
-        <ion-img [src]="photo.base64Data" (click)="showActionSheet(photo, position)"></ion-img>
+        <ion-img [src]="photo.photoSource" (click)="showActionSheet(photo, position)"></ion-img>
       </ion-col>
     </ion-row>
   </ion-grid>

@@ -10,6 +10,7 @@ import { from } from 'rxjs';
 import { PhotoContentComponent } from '../components/photo-content/photo-content.component';
 import { MarkerContentComponent } from '../components/marker-content/marker-content.component';
 import { StorageService } from '../services/storage.service';
+import { Capacitor } from '@capacitor/core';
 
 @Component({
   selector: 'app-map',
@@ -113,15 +114,27 @@ export class MapPage implements OnInit {
 
     from(this.storageService.getPositions()).subscribe(ms => {
 
-      let coordinates: Coordinate[] = ms;
+      let coordinates: Coordinate[];
+
+      if (Capacitor.isNativePlatform) {
+        coordinates = ms.map(c => c.coordinates);
+      } else {
+        coordinates = ms;
+      }
+
 
       let i = 0;
       let len = coordinates.length;
-
+      //console.log('show properties');
       while (i < len) {
+        //console.log('show properties2222');
+        //this.showProps(coordinates[i]);
+        //console.log('show properties3333');
+        //this.showProps(coordinates[i].coordinates);
         let mark = L.marker([coordinates[i].lat, coordinates[i].lng], { icon: this.iconMark }).addTo(this.leafletMap);
         mark.addEventListener('click', (x) => {
           self.isPopoverOpen = !self.isPopoverOpen;
+          //const coords = coordinates.map(c => c.coordinates);
           self.coordinate = coordinates.find(c => c.lat === x.latlng.lat && c.lng === x.latlng.lng);
         });
         i++
@@ -130,6 +143,15 @@ export class MapPage implements OnInit {
     }
     );
   }
+
+  private showProps(obj): void {
+    let result = "";
+    Object.keys(obj).forEach((i) => {
+      result += `${i} ===== ${obj[i]}\n`;
+    });
+    console.log(result);
+  }
+
 
   private currentMarkerPosition(): void {
 

@@ -12,6 +12,7 @@ import { PhotoService } from 'src/app/services/photo.service';
 import { environment } from 'src/environments/environment';
 import { CommonModule } from '@angular/common';
 import { StorageService } from 'src/app/services/storage.service';
+import { Capacitor } from '@capacitor/core';
 
 
 @Component({
@@ -50,15 +51,16 @@ export class MarkerContentComponent implements OnInit {
 
   onSubmit() {
 
-    let exist: any;
-    let coordinates: Coordinate[];
+    let exist: Coordinate;
+    let coordinates: any[];
 
     from(this.storageService.getPositions()).subscribe(ms => {
 
-      coordinates = ms;
-
-      if (coordinates) {
-        exist = coordinates.find(c => c.lat === this.coordinate.lat && c.lng === this.coordinate.lng);
+      if (Capacitor.isNativePlatform) {
+        coordinates = ms;
+        exist = coordinates.find(c => c.coordinates.lat === this.coordinate.lat && c.coordinates.lng === this.coordinate.lng);
+      } else {
+        exist = ms.find(c => c.lat === this.coordinate.lat && c.lng === this.coordinate.lng);
       }
 
       let title = this.form.controls['title'].value;
@@ -73,6 +75,7 @@ export class MarkerContentComponent implements OnInit {
       if (!exist) {
         this.storageService.addNewPosition(this.coordinate);
       } else {
+        this.coordinate.id = exist.id;
         this.storageService.updatePosition(this.coordinate);
       }
 

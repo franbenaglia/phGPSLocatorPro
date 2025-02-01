@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { SqliteService } from './sqlite.service';
 import { IndexeddbService } from './indexeddb.service';
 import { Capacitor } from '@capacitor/core';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { Coordinate } from '../model/coordinate';
 import { UserPhoto } from '../model/userPhoto';
 
@@ -27,7 +27,7 @@ export class StorageService {
   }
 
 
-  getPositions(): Observable<Coordinate[]> {
+  getPositions(): Observable<any[]> {
     if (!this.native) {
       return this.indexeddb.getPositions();
     } else {
@@ -35,7 +35,7 @@ export class StorageService {
     }
   }
 
-  getPhotos(): Observable<UserPhoto[]> {
+  getPhotos(): Observable<any[]> { //UserPhoto
     if (!this.native) {
       return this.indexeddb.getPhotos();
     } else {

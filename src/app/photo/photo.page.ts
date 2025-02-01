@@ -9,6 +9,7 @@ import { addIcons } from 'ionicons';
 import { camera, chevronForwardCircle, colorPalette, document, globe, image } from 'ionicons/icons';
 import { environment } from 'src/environments/environment';
 import { StorageService } from '../services/storage.service';
+import { Capacitor } from '@capacitor/core';
 
 @Component({
   selector: 'app-photo',
@@ -37,16 +38,24 @@ export class PhotoPage implements OnInit {
 
   isToastOpen: boolean = false;
 
-  addPhotoToGallery() {
-    this.checkPermissions();
-    this.photoService.addNewToGallery();
-    window.location.assign(this.urllocalserver);
+  async addPhotoToGallery() {
 
+    this.checkPermissions();
+
+    await this.photoService.addNewToGallery();
+
+    if (!Capacitor.isNativePlatform()) {
+      window.location.assign(this.urllocalserver);
+    }
   }
 
-  addImageToGallery() {
-    this.photoService.addImageToGallery();
-    window.location.assign(this.urllocalserver);
+  async addImageToGallery() {
+
+    await this.photoService.addImageToGallery();
+
+    if (!Capacitor.isNativePlatform()) {
+      window.location.assign(this.urllocalserver);
+    }
   }
 
   public async showActionSheet(photo: UserPhoto, position: number) {
